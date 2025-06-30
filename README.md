@@ -1,4 +1,4 @@
-# ![APC Logo](https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/apc-logo.png)
+# ![APC Logo](https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/images/apc-logo.png)
 
 # APC: Agent Protocol Conductor
 
