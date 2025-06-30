@@ -75,14 +75,6 @@ python examples/grpc_minimal.py
 
 ---
 
-## 💡 Why is this easy?
-- **No manual pip or protoc commands needed**: Just run the provided scripts.
-- **Plug-and-play**: Add your own agents, LLMs, or business logic by subclassing the provided state machines.
-- **Multi-language ready**: Use the same Protobuf schema to generate SDKs for Node.js, Go, etc.
-- **Production-grade**: Pluggable checkpointing, security stubs, and transport adapters included.
-
----
-
 ## 🔥 Advanced Usage
 - Integrate LLMs or custom logic in your Worker agents (see [`examples/llm_worker.py`](examples/llm_worker.py)).
 - Use Redis or S3 for distributed checkpointing.
@@ -104,6 +96,14 @@ python examples/grpc_minimal.py
 - Fork, branch, and submit PRs!
 - See [`apc-proto/apc.proto`](apc-proto/apc.proto) for message definitions
 - See [`apc-core/README.md`](apc-core/README.md) for architecture
+
+---
+
+## 📦 Release Information
+
+- **Current Release:** v0.1.x (Alpha)
+- See [Releases](https://github.com/deepfarkade/apc-protocol/releases) for changelogs and version history.
+- This is the first public alpha release of the APC protocol and SDK.
 
 ---
 
