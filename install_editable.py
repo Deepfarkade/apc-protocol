@@ -9,7 +9,7 @@ import sys
 import os
 
 project_root = os.path.dirname(os.path.abspath(__file__))
-apc_core_path = os.path.join(project_root, 'apc-core')
+apc_core_path = os.path.join(project_root, 'apc_core')
 
 try:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-e', apc_core_path])
