@@ -154,63 +154,11 @@ Imagine a real-world scenario where you need to process a batch of scanned docum
 5. If `Agent B` fails or disconnects, APC's checkpointing and takeover logic allow another eligible OCR agent to resume from the last checkpoint—no data loss, no manual intervention.
 6. Every step, hand-off, and result is auditable and interoperable across languages and platforms.
 
-**Data Flow Diagram:**
-
-```mermaid
-graph TD
-    A[Agent A (Conductor)] -->|ProposeTask: OCR| B[Agent B (Worker: OCR)]
-    B -->|Completed: Text| A
-    A -->|ProposeTask: Summarize| C[Agent C (Worker: Summarizer)]
-    C -->|Completed: Summary| A
-    B -.->|Failure/Timeout| A
-    A -->|TakeOver| B2[Agent B2 (Backup OCR)]
-    B2 -->|Completed: Text| A
-```
-
-This flow shows how APC enables robust, dynamic, and recoverable multi-agent workflows—ideal for real-world, production-grade AI systems.
-
 ---
 
 ## 📊 More Real-World Scenarios & Diagrams
 
-### Scenario 1: Multi-Stage Data Pipeline
-
-- `Agent X` (Conductor): Orchestrates ETL pipeline.
-- `Agent Y` (Worker: Extract): Pulls data from APIs.
-- `Agent Z` (Worker: Transform): Cleans and normalizes data.
-- `Agent W` (Worker: Load): Loads data into a database.
-
-```mermaid
-graph TD
-    X[Agent X (Conductor)] -->|ProposeTask: Extract| Y[Agent Y (Extract)]
-    Y -->|Completed: Raw Data| X
-    X -->|ProposeTask: Transform| Z[Agent Z (Transform)]
-    Z -->|Completed: Clean Data| X
-    X -->|ProposeTask: Load| W[Agent W (Load)]
-    W -->|Completed: DB Insert| X
-    Y -.->|Failure/Timeout| X
-    X -->|TakeOver| Y2[Agent Y2 (Backup Extract)]
-    Y2 -->|Completed: Raw Data| X
-```
-
-### Scenario 2: LLM-Driven Multi-Agent Chat
-
-- `Agent M` (Conductor): Manages conversation flow.
-- `Agent N` (Worker: LLM): Generates responses.
-- `Agent O` (Worker: Tool-Caller): Executes API/tool calls.
-
-```mermaid
-graph TD
-    M[Agent M (Conductor)] -->|ProposeTask: Generate| N[Agent N (LLM)]
-    N -->|Completed: Response| M
-    M -->|ProposeTask: ToolCall| O[Agent O (Tool-Caller)]
-    O -->|Completed: Tool Result| M
-    N -.->|Failure/Timeout| M
-    M -->|TakeOver| N2[Agent N2 (Backup LLM)]
-    N2 -->|Completed: Response| M
-```
-
-These scenarios show how APC can power robust, recoverable, and auditable workflows in both classic data engineering and advanced Gen-AI agent ecosystems.
+For advanced diagrams and multi-agent workflow scenarios, see the [full documentation](docs/documentation.md).
 
 ---
 

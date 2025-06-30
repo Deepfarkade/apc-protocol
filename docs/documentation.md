@@ -35,19 +35,17 @@ APC is a decentralized orchestration protocol for heterogeneous AI agent ecosyst
 ---
 
 ## Architecture Overview
+
+**Visual Diagram:**
+
+```mermaid
+graph TD
+    A[Agent A (Conductor)] <--> M[Message Transport]
+    M <--> B[Agent B (Worker)]
+    A -->|Registry/Discovery| C[Agent C (Worker)]
+    C -->|Registry/Discovery| D[Agent D (Planner)]
 ```
-+-------------+   +-------------+   +-------------+
-|  Agent A    |<->|  Message    |<->|  Agent B    |
-| (Conductor) |   |  Transport  |   |  (Worker)   |
-+-------------+   +-------------+   +-------------+
-      |  /                                 
-      | \                                  
-      v  v                                 
-+-------------+ Registry/Discovery +-------------+
-|  Agent C    |<-------------------|  Agent D    |
-| (Worker)    |                    |  (Planner)  |
-+-------------+                    +-------------+
-```
+
 - **Registry/Discovery**: Optional central or P2P service for agent registration and discovery.
 - **Transport Layer**: gRPC or WebSocket for bi-directional messaging.
 - **Message Broker**: Pub/Sub or direct peer connections.
@@ -160,6 +158,8 @@ All three advanced the field, but none provided a flexible, fault-tolerant way f
 - `Agent Z` (Worker: Transform): Cleans and normalizes data.
 - `Agent W` (Worker: Load): Loads data into a database.
 
+**Data Flow:**
+
 ```mermaid
 graph TD
     X[Agent X (Conductor)] -->|ProposeTask: Extract| Y[Agent Y (Extract)]
@@ -173,11 +173,15 @@ graph TD
     Y2 -->|Completed: Raw Data| X
 ```
 
+---
+
 ### Scenario 2: LLM-Driven Multi-Agent Chat
 
 - `Agent M` (Conductor): Manages conversation flow.
 - `Agent N` (Worker: LLM): Generates responses.
 - `Agent O` (Worker: Tool-Caller): Executes API/tool calls.
+
+**Data Flow:**
 
 ```mermaid
 graph TD
@@ -190,8 +194,54 @@ graph TD
     N2 -->|Completed: Response| M
 ```
 
-These scenarios show how APC can power robust, recoverable, and auditable workflows in both classic data engineering and advanced Gen-AI agent ecosystems.
+---
+
+### Scenario 3: Distributed Image Processing Pipeline
+
+- `Agent P` (Conductor): Orchestrates image processing.
+- `Agent Q` (Worker: Preprocessor): Resizes and normalizes images.
+- `Agent R` (Worker: Classifier): Classifies images.
+- `Agent S` (Worker: Annotator): Annotates images with results.
+
+**Data Flow:**
+
+```mermaid
+graph TD
+    P[Agent P (Conductor)] -->|ProposeTask: Preprocess| Q[Agent Q (Preprocessor)]
+    Q -->|Completed: Preprocessed Images| P
+    P -->|ProposeTask: Classify| R[Agent R (Classifier)]
+    R -->|Completed: Labels| P
+    P -->|ProposeTask: Annotate| S[Agent S (Annotator)]
+    S -->|Completed: Annotated Images| P
+    Q -.->|Failure/Timeout| P
+    P -->|TakeOver| Q2[Agent Q2 (Backup Preprocessor)]
+    Q2 -->|Completed: Preprocessed Images| P
+```
 
 ---
 
-For more, see the [README](../README.md) or open an issue/discussion on GitHub.
+### Scenario 4: Autonomous Fleet Coordination
+
+- `Agent F` (Conductor): Assigns delivery tasks.
+- `Agent G` (Worker: Drone 1): Delivers package.
+- `Agent H` (Worker: Drone 2): Delivers package.
+- `Agent I` (Worker: Ground Robot): Handles last-mile delivery.
+
+**Data Flow:**
+
+```mermaid
+graph TD
+    F[Agent F (Conductor)] -->|ProposeTask: Deliver| G[Agent G (Drone 1)]
+    F -->|ProposeTask: Deliver| H[Agent H (Drone 2)]
+    G -->|Completed: Delivery| F
+    H -->|Completed: Delivery| F
+    F -->|ProposeTask: Last Mile| I[Agent I (Ground Robot)]
+    I -->|Completed: Final Delivery| F
+    G -.->|Failure/Timeout| F
+    F -->|TakeOver| G2[Agent G2 (Backup Drone)]
+    G2 -->|Completed: Delivery| F
+```
+
+---
+
+For more, see the [README](../README.md) or use the provided Mermaid code in a compatible viewer. Each scenario demonstrates APC's ability to coordinate, recover, and audit complex, distributed agent workflows in real-world domains.
