@@ -68,12 +68,6 @@ This will start a minimal Conductor and Worker agent using the APC protocol over
 
 ---
 
-## Why is this easy?
-- **No manual pip or protoc commands needed**: Just run the provided scripts.
-- **Plug-and-play**: Add your own agents, LLMs, or business logic by subclassing the provided state machines.
-- **Multi-language ready**: Use the same Protobuf schema to generate SDKs for Node.js, Go, etc.
-- **Production-grade**: Pluggable checkpointing, security stubs, and transport adapters included.
-
 ## Advanced Usage
 - Integrate LLMs or custom logic in your Worker agents (see `examples/llm_worker.py`).
 - Use Redis or S3 for distributed checkpointing.
