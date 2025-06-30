@@ -18,6 +18,10 @@ setup(
     ],
     python_requires=">=3.8",
     include_package_data=True,
+        package_data={
+        # Ensure all generated protobuf files are included
+        "apc_core.messages": ["*.py"],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
