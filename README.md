@@ -1,12 +1,15 @@
+# ![APC Logo](https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/apc-logo.png)
+
 # APC: Agent Protocol Conductor
 
----
-
-<img src="https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/apc-logo.png" alt="APC Logo" width="120" align="right" />
+[![PyPI version](https://img.shields.io/pypi/v/apc-core?color=blue)](https://pypi.org/project/apc-core/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/deepfarkade/apc-protocol/ci.yml?branch=main)](https://github.com/deepfarkade/apc-protocol/actions)
+[![Docs](https://img.shields.io/badge/docs-online-blue)](docs/documentation.md)
 
 A protocol for decentralized, resilient, and auditable orchestration of heterogeneous AI agent ecosystems.
 
-[Documentation](#getting-started-step-by-step) | [Specification](apc-proto/apc.proto) | [Discussions](https://github.com/deepfarkade/apc-protocol/discussions)
+[Documentation](docs/documentation.md) | [Specification](apc-proto/apc.proto) | [Discussions](https://github.com/deepfarkade/apc-protocol/discussions)
 
 ---
 
