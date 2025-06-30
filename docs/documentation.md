@@ -36,19 +36,17 @@ APC is a decentralized orchestration protocol for heterogeneous AI agent ecosyst
 
 ## Architecture Overview
 
-**Visual Diagram:**
+<img alt="APC Architecture" src="https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/images/apc-architecture.png">
 
-```mermaid
-graph TD
-    A[Agent A (Conductor)] <--> M[Message Transport]
-    M <--> B[Agent B (Worker)]
-    A -->|Registry/Discovery| C[Agent C (Worker)]
-    C -->|Registry/Discovery| D[Agent D (Planner)]
-```
+🔧 **APC Protocol – High-Level Architecture Summary**
+This diagram showcases the core runtime structure of the APC (Agent Protocol for Choreography) system.
 
-- **Registry/Discovery**: Optional central or P2P service for agent registration and discovery.
-- **Transport Layer**: gRPC or WebSocket for bi-directional messaging.
-- **Message Broker**: Pub/Sub or direct peer connections.
+- **Conductor Agent:** The central orchestrator that assigns tasks to Worker Agents based on a known plan. It maintains execution state and error recovery logic.
+- **gRPC/WebSocket Layer:** A communication backbone that enables bidirectional, low-latency messaging between Conductor and Worker Agents.
+- **Worker Agent:** These agents perform domain-specific subtasks. They respond to commands from the Conductor and return results or status updates.
+- **Checkpoint Store:** A persistent storage layer used by the Conductor to save execution state. On system failure, it allows the Conductor to recover seamlessly without restarting the entire flow.
+
+This modular setup enables dynamic, scalable, and fault-tolerant agent workflows where control is coordinated yet loosely coupled through standardized message passing and recovery mechanisms.
 
 ---
 
@@ -151,96 +149,59 @@ All three advanced the field, but none provided a flexible, fault-tolerant way f
 
 ## More Real-World Scenarios & Diagrams
 
-### Scenario 1: Multi-Stage Data Pipeline
+### 📦 Scenario 1: Multi‑Stage Data Pipeline
 
-- `Agent X` (Conductor): Orchestrates ETL pipeline.
-- `Agent Y` (Worker: Extract): Pulls data from APIs.
-- `Agent Z` (Worker: Transform): Cleans and normalizes data.
-- `Agent W` (Worker: Load): Loads data into a database.
+<img alt="Multi‑Stage Data Pipeline APC Architecture" src="https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/images/Scenerio-1.png">
 
-**Data Flow:**
+**APC in Action:**
 
-```mermaid
-graph TD
-    X[Agent X (Conductor)] -->|ProposeTask: Extract| Y[Agent Y (Extract)]
-    Y -->|Completed: Raw Data| X
-    X -->|ProposeTask: Transform| Z[Agent Z (Transform)]
-    Z -->|Completed: Clean Data| X
-    X -->|ProposeTask: Load| W[Agent W (Load)]
-    W -->|Completed: DB Insert| X
-    Y -.->|Failure/Timeout| X
-    X -->|TakeOver| Y2[Agent Y2 (Backup Extract)]
-    Y2 -->|Completed: Raw Data| X
-```
+- **Dynamic Conductor Claim:** Agent X volunteers as conductor for this ETL batch.
+- **Sequenced Proposals:** X “PROPOSE_TASK: Extract” → Y; on completion, “PROPOSE_TASK: Transform” → Z; then “PROPOSE_TASK: Load” → W.
+- **Checkpointing:** After each subtask, X records progress (e.g. raw data, cleaned data) in the checkpoint store.
+- **Failover:** If Y times out or fails, X issues a TAKE_OVER and re‑proposes extract to Y2.
+- **Completion:** Once W reports “COMPLETED,” X closes the batch.
 
 ---
 
-### Scenario 2: LLM-Driven Multi-Agent Chat
+### 💬 Scenario 2: LLM‑Driven Multi‑Agent Chat
 
-- `Agent M` (Conductor): Manages conversation flow.
-- `Agent N` (Worker: LLM): Generates responses.
-- `Agent O` (Worker: Tool-Caller): Executes API/tool calls.
+<img alt="LLM‑Driven Multi‑Agent Chat APC Architecture" src="https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/images/Scenerio-2.png">
 
-**Data Flow:**
+**APC in Action:**
 
-```mermaid
-graph TD
-    M[Agent M (Conductor)] -->|ProposeTask: Generate| N[Agent N (LLM)]
-    N -->|Completed: Response| M
-    M -->|ProposeTask: ToolCall| O[Agent O (Tool-Caller)]
-    O -->|Completed: Tool Result| M
-    N -.->|Failure/Timeout| M
-    M -->|TakeOver| N2[Agent N2 (Backup LLM)]
-    N2 -->|Completed: Response| M
-```
+- **Orchestration Start:** M receives a new user message and becomes conductor for that turn.
+- **LLM Call:** M “PROPOSE_TASK: Generate” → N; N returns the text response.
+- **Tool Execution:** M then “PROPOSE_TASK: ToolCall” → O (e.g., fetch weather API); O returns results.
+- **Resilience:** If N fails to reply, M “TAKE_OVER” and sends generate request to N2.
+- **Unified Flow:** M aggregates both responses, then sends back to the user—all under one batch ID.
 
 ---
 
-### Scenario 3: Distributed Image Processing Pipeline
+### 🖼️ Scenario 3: Distributed Image Processing
 
-- `Agent P` (Conductor): Orchestrates image processing.
-- `Agent Q` (Worker: Preprocessor): Resizes and normalizes images.
-- `Agent R` (Worker: Classifier): Classifies images.
-- `Agent S` (Worker: Annotator): Annotates images with results.
+<img alt="Distributed Image Processing APC Architecture" src="https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/images/Scenerio-3.png">
 
-**Data Flow:**
+**APC in Action:**
 
-```mermaid
-graph TD
-    P[Agent P (Conductor)] -->|ProposeTask: Preprocess| Q[Agent Q (Preprocessor)]
-    Q -->|Completed: Preprocessed Images| P
-    P -->|ProposeTask: Classify| R[Agent R (Classifier)]
-    R -->|Completed: Labels| P
-    P -->|ProposeTask: Annotate| S[Agent S (Annotator)]
-    S -->|Completed: Annotated Images| P
-    Q -.->|Failure/Timeout| P
-    P -->|TakeOver| Q2[Agent Q2 (Backup Preprocessor)]
-    Q2 -->|Completed: Preprocessed Images| P
-```
+- **Initiation:** P kicks off the image batch, claiming conductor duties.
+- **Preprocessing:** P → Q to resize/normalize; upon “COMPLETED,” P → R to classify.
+- **Annotation:** After labels arrive, P → S to overlay annotations.
+- **Checkpointing & Recovery:** P checkpoints image states after each stage. If Q fails, P hands off to Q2, which resumes from last checkpoint.
+- **End‑to‑End Audit:** All message exchanges and checkpoint snapshots are logged for traceability.
 
 ---
 
-### Scenario 4: Autonomous Fleet Coordination
+### 🚚 Scenario 4: Autonomous Fleet Coordination
 
-- `Agent F` (Conductor): Assigns delivery tasks.
-- `Agent G` (Worker: Drone 1): Delivers package.
-- `Agent H` (Worker: Drone 2): Delivers package.
-- `Agent I` (Worker: Ground Robot): Handles last-mile delivery.
+<img alt="Autonomous Fleet Coordination APC Architecture" src="https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/images/Scenerio-4.png">
 
-**Data Flow:**
+**APC in Action:**
 
-```mermaid
-graph TD
-    F[Agent F (Conductor)] -->|ProposeTask: Deliver| G[Agent G (Drone 1)]
-    F -->|ProposeTask: Deliver| H[Agent H (Drone 2)]
-    G -->|Completed: Delivery| F
-    H -->|Completed: Delivery| F
-    F -->|ProposeTask: Last Mile| I[Agent I (Ground Robot)]
-    I -->|Completed: Final Delivery| F
-    G -.->|Failure/Timeout| F
-    F -->|TakeOver| G2[Agent G2 (Backup Drone)]
-    G2 -->|Completed: Delivery| F
-```
+- **Task Assignment:** F as conductor proposes “Deliver” to G and H in parallel (two drones).
+- **Status Aggregation:** Each drone reports back “COMPLETED” when the package is dropped.
+- **Last‑Mile Handoff:** F then “PROPOSE_TASK: Last Mile” → I (ground robot).
+- **Fault Tolerance:** If G fails mid‑flight, F uses TAKE_OVER to reassign its route to G2 with the same mission parameters.
+- **Coordinated Finish:** F collects all completions and closes the delivery workflow.
 
 ---
 
