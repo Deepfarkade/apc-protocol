@@ -13,11 +13,22 @@ A protocol for decentralized, resilient, and auditable orchestration of heteroge
 
 ---
 
-APC (Agent Protocol Conductor) is an open protocol and SDK for orchestrating distributed AI agents, enabling dynamic leadership hand-off, sequenced task execution, checkpointing, failover, and auditability—without centralized control. APC is designed for interoperability, extensibility, and production-readiness, supporting both classic automation and LLM-powered agents.
+APC (Agent Protocol Conductor) is an open protocol and SDK designed to orchestrate distributed AI agents in a truly decentralized, resilient, and auditable way. With APC, you can build intelligent systems where multiple agents—each with their own roles and capabilities—work together to accomplish complex tasks, adapt to failures, and recover automatically, all without relying on a central controller.
+
+Key features include:
+- **Dynamic Leadership:** Any agent can become the conductor, coordinating workflows and handing off control as needed.
+- **Sequenced Task Execution:** Define and manage multi-step processes, with each agent performing specialized subtasks.
+- **Checkpointing & Failover:** Progress is saved at every step, so if an agent fails, another can seamlessly take over from the last checkpoint—no lost work, no manual intervention.
+- **Interoperability:** Built on Protobuf schemas, APC supports cross-language agent ecosystems (Python, TypeScript, Java, and more).
+- **Extensibility & Security:** Easily add new message types, enforce security with mTLS/JWT, and integrate custom business logic or LLMs.
+
+APC is production-ready and ideal for both classic automation and advanced AI-powered workflows. Whether you’re building ETL pipelines, LLM chatbots, or autonomous fleets, APC gives you the tools to create robust, scalable, and future-proof agent systems.
 
 ---
 
 ## 🚀 Getting Started
+
+
 
 - 📚 **Read the [Documentation](#getting-started-step-by-step)** for guides and tutorials
 - 🔍 **Review the [Specification](apc-proto/apc.proto)** for protocol details
@@ -72,6 +83,22 @@ python examples/grpc_minimal.py
    ```sh
    python examples/grpc_minimal.py
    ```
+
+---
+
+## 🏗️ Architecture Overview
+
+![APC Architecture](https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/images/apc-architecture.png)
+
+🔧 **APC Protocol – High-Level Architecture Summary**
+This diagram showcases the core runtime structure of the APC (Agent Protocol for Choreography) system.
+
+- **Conductor Agent**: The central orchestrator that assigns tasks to Worker Agents based on a known plan. It maintains execution state and error recovery logic.
+- **gRPC/WebSocket Layer**: A communication backbone that enables bidirectional, low-latency messaging between Conductor and Worker Agents.
+- **Worker Agent**: These agents perform domain-specific subtasks. They respond to commands from the Conductor and return results or status updates.
+- **Checkpoint Store**: A persistent storage layer used by the Conductor to save execution state. On system failure, it allows the Conductor to recover seamlessly without restarting the entire flow.
+
+This modular setup enables dynamic, scalable, and fault-tolerant agent workflows where control is coordinated yet loosely coupled through standardized message passing and recovery mechanisms.
 
 ---
 
