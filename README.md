@@ -2,14 +2,14 @@
 
 # APC: Agent Protocol Conductor
 
-[![PyPI version](https://img.shields.io/pypi/v/apc-core?color=blue)](https://pypi.org/project/apc-core/)
+[![PyPI version](https://img.shields.io/pypi/v/apc-protocol?color=blue)](https://pypi.org/project/apc-protocol/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/deepfarkade/apc-protocol/ci.yml?branch=main)](https://github.com/deepfarkade/apc-protocol/actions)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](docs/documentation.md)
 
 A protocol for decentralized, resilient, and auditable orchestration of heterogeneous AI agent ecosystems.
 
-[Documentation](docs/documentation.md) | [Specification](apc-proto/apc.proto) | [Discussions](https://github.com/deepfarkade/apc-protocol/discussions)
+[Documentation](docs/documentation.md) | [Specification](proto/apc.proto) | [Examples](examples/) | [PyPI Package](https://pypi.org/project/apc-protocol/)
 
 ---
 
@@ -26,103 +26,104 @@ APC is production-ready and ideal for both classic automation and advanced AI-po
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
+```sh
+# Install from PyPI
+pip install apc-protocol
 
+# Or from source
+git clone https://github.com/deepfarkade/apc-protocol.git
+cd apc-protocol
+python setup.py
+```
 
-- 📚 **Read the [Documentation](#getting-started-step-by-step)** for guides and tutorials
-- 🔍 **Review the [Specification](apc-proto/apc.proto)** for protocol details
-- 🧑‍💻 **Use our SDKs to start building:**
-  - [Python SDK](apc-core/)
-  - [TypeScript SDK](#) *(coming soon)*
-  - [Java SDK](#) *(coming soon)*
+## 🧑‍� Basic Usage
 
----
+```python
+from apc import Worker, Conductor
+from apc.transport import GRPCTransport
 
-## 🛠️ Features
+# Create worker with specific roles
+worker = Worker("my-worker", roles=["data-processor"])
+
+# Register task handlers
+@worker.register_handler("process_data")
+async def handle_data(batch_id: str, step_name: str, params: dict):
+    # Your processing logic here
+    return {"processed": params["data"], "status": "completed"}
+
+# Set up transport and start
+transport = GRPCTransport(port=50051)
+worker.bind_transport(transport)
+await transport.start_server()
+```
+
+## 🛠️ Key Features
+
 - **Protobuf-based message schemas** for cross-language interoperability
 - **Pluggable checkpoint manager** (in-memory, Redis, S3)
 - **State machine engine** for conductor and worker agents
 - **gRPC and WebSocket transport adapters**
-- **Security stubs** (mTLS, JWT)
-- **Ready for open source and multi-language SDKs**
-
----
-
-## ⚡ Quick Start
-
-```sh
-# 1. Install the core package (editable mode)
-python install_editable.py
-
-# 2. Generate Python code from Protobuf
-python generate_proto.py
-
-# 3. Run a sample agent (see examples/ or samples/python/)
-python examples/grpc_minimal.py
-```
-
----
-
-## 🧑‍💻 Getting Started (Step-by-Step)
-
-1. **Clone the repository**
-   ```sh
-   git clone https://github.com/deepfarkade/apc-protocol.git
-   cd apc-protocol
-   ```
-2. **Install Python dependencies and the core package (editable mode)**
-   ```sh
-   python install_editable.py
-   ```
-3. **Generate Python code from Protobuf schemas**
-   ```sh
-   python generate_proto.py
-   ```
-4. **Run an example agent**
-   ```sh
-   python examples/grpc_minimal.py
-   ```
+- **Dynamic Leadership**: Any agent can become the conductor
+- **Fault Tolerance**: Automatic failover and recovery
+- **Cross-Language Support**: Python, TypeScript, Java, and more
+- **Checkpointing**: Save progress and resume from failures
+- **Security Ready**: mTLS, JWT authentication support
 
 ---
 
 ## 🏗️ Architecture Overview
 
-![APC Architecture](https://raw.githubusercontent.com/deepfarkade/apc-protocol/main/docs/images/apc-architecture.png)
+![APC Architecture](docs/images/apc-architecture.png)
 
-🔧 **APC Protocol – High-Level Architecture Summary**
-This diagram showcases the core runtime structure of the APC (Agent Protocol for Choreography) system.
+APC Protocol enables decentralized agent coordination with:
 
-- **Conductor Agent**: The central orchestrator that assigns tasks to Worker Agents based on a known plan. It maintains execution state and error recovery logic.
-- **gRPC/WebSocket Layer**: A communication backbone that enables bidirectional, low-latency messaging between Conductor and Worker Agents.
-- **Worker Agent**: These agents perform domain-specific subtasks. They respond to commands from the Conductor and return results or status updates.
-- **Checkpoint Store**: A persistent storage layer used by the Conductor to save execution state. On system failure, it allows the Conductor to recover seamlessly without restarting the entire flow.
+- **Conductor Agent**: The orchestrator that assigns tasks to Worker Agents based on a workflow plan. Maintains execution state and error recovery logic.
+- **Worker Agent**: Domain-specific agents that perform specialized subtasks. They respond to commands from Conductors and return results.
+- **gRPC/WebSocket Layer**: Communication backbone that enables bidirectional, low-latency messaging between agents.
+- **Checkpoint Store**: Persistent storage layer used to save execution state. Enables seamless recovery without restarting entire workflows.
 
-This modular setup enables dynamic, scalable, and fault-tolerant agent workflows where control is coordinated yet loosely coupled through standardized message passing and recovery mechanisms.
-
----
-
-## 🔥 Advanced Usage
-- Integrate LLMs or custom logic in your Worker agents (see [`examples/llm_worker.py`](examples/llm_worker.py)).
-- Use Redis or S3 for distributed checkpointing.
-- Build your own CLI or web dashboard on top of the protocol.
+This modular setup enables dynamic, scalable, and fault-tolerant agent workflows where control is coordinated yet loosely coupled through standardized message passing.
 
 ---
 
-## 🧩 Project Structure
-- [`apc-core/`](apc-core/) — Core Python SDK
-- [`apc-proto/`](apc-proto/) — Protobuf schemas
-- [`apc-transport/`](apc-transport/) — gRPC/WebSocket adapters
-- [`examples/`](examples/) — Example agents and LLM integration
-- [`samples/`](samples/) — Additional sample agents
-- [`tests/`](tests/) — Integration tests
+## 📚 Learn More
+- **[Usage Guide](docs/USAGE_GUIDE.md)** - Complete tutorials and examples
+- **[Examples](examples/)** - Working code you can run
+- **[Protocol Spec](proto/apc.proto)** - Technical details
 
 ---
 
 ## 🤝 Contributing
-- Fork, branch, and submit PRs!
-- See [`apc-proto/apc.proto`](apc-proto/apc.proto) for message definitions
-- See [`apc-core/README.md`](apc-core/README.md) for architecture
+
+We welcome contributions! Here's how to get started:
+
+### Development Setup
+```sh
+git clone https://github.com/deepfarkade/apc-protocol.git
+cd apc-protocol
+python setup.py
+python scripts/test_package.py
+```
+
+### Key Files
+- [`proto/apc.proto`](proto/apc.proto) - Protocol definitions
+- [`src/apc/`](src/apc/) - Core Python SDK
+- [`examples/`](examples/) - Usage examples
+- [`docs/`](docs/) - Documentation
+
+### Testing
+```sh
+# Run tests
+python scripts/test_package.py
+
+# Run demo
+python scripts/demo.py
+
+# Test examples
+python examples/basic/simple_grpc.py
+```
 
 ---
 

@@ -51,7 +51,7 @@ This modular setup enables dynamic, scalable, and fault-tolerant agent workflows
 ---
 
 ## Message Schemas
-- Defined in [apc-proto/apc.proto](../apc-proto/apc.proto)
+- Defined in [proto/apc.proto](../proto/apc.proto)
 - Protobuf v3 for cross-language support
 - Core messages: `ProposeTask`, `Accept`, `Reject`, `Completed`, `Failed`, `TakeOver`, etc.
 
@@ -93,14 +93,53 @@ This modular setup enables dynamic, scalable, and fault-tolerant agent workflows
 
 ## SDK Usage
 - See [examples/](../examples/) for sample agents
+- Install via `pip install apc-protocol`
 - Subclass `Conductor` or `Worker` and implement your logic
 - Integrate LLMs or custom business logic as needed
+
+### Basic Usage
+```python
+from apc import Worker, Conductor
+from apc.transport import GRPCTransport
+
+# Create a worker
+worker = Worker("my-worker", roles=["processor"])
+
+@worker.register_handler("my_task")
+async def handle_task(batch_id, step_name, params):
+    return {"result": "completed"}
+
+# Setup transport
+transport = GRPCTransport(port=50051)
+worker.bind_transport(transport)
+await transport.start_server()
+```
 
 ---
 
 ## Examples
-- [Minimal gRPC Conductor/Worker](../examples/grpc_minimal.py)
-- [LLM Worker Integration](../examples/llm_worker.py)
+- [Basic gRPC Example](../examples/basic/simple_grpc.py)
+- [LLM Agent Integration](../examples/agents/llm_agent.py)
+- [Data Processing Pipeline](../examples/agents/data_processor.py)
+
+### Quick Start Example
+```python
+# Install: pip install apc-protocol
+from apc import Worker
+import asyncio
+
+async def main():
+    worker = Worker("demo-worker", roles=["demo"])
+    
+    @worker.register_handler("demo_task")
+    async def demo_handler(batch_id, step_name, params):
+        return {"message": "Hello from APC!", "data": params}
+    
+    print("Worker ready!")
+    # Add your transport setup here
+
+asyncio.run(main())
+```
 
 ---
 

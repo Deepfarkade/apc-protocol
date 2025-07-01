@@ -8,9 +8,9 @@ import subprocess
 import sys
 import os
 
-project_root = os.path.dirname(os.path.abspath(__file__))
-proto_dir = os.path.join(project_root, 'apc-proto')
-out_dir = os.path.join(project_root, 'apc-core', 'messages')
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+proto_dir = os.path.join(project_root, 'proto')
+out_dir = os.path.join(project_root, 'src', 'apc', 'messages')
 proto_file = os.path.join(proto_dir, 'apc.proto')
 
 cmd = [
@@ -23,7 +23,7 @@ cmd = [
 
 try:
     subprocess.check_call(cmd)
-    print("\n[APC] Protobuf code generated successfully in apc-core/messages!")
+    print(f"\n[APC] Protobuf code generated successfully in {out_dir}!")
 except subprocess.CalledProcessError as e:
     print("[APC] Protobuf code generation failed:", e)
     sys.exit(1)
