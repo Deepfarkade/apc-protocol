@@ -1,0 +1,25 @@
+{
+  "checkpoint_time": 1751381257.7506385,
+  "batch_id": "azure_research_ws_1751381217",
+  "apc_version": "1.0.0",
+  "state": {
+    "task_id": "azure_research_ws_1751381217-report-1751381238",
+    "batch_id": "azure_research_ws_1751381217",
+    "step_name": "report",
+    "params": {},
+    "state": "COMPLETED",
+    "started_at": 1751381238.8577635,
+    "completed_at": 1751381252.7123072,
+    "result": {
+      "status": "completed",
+      "report_generated": true
+    },
+    "error": null,
+    "worker_id": "research_agent_ws",
+    "roles": [
+      "researcher",
+      "reporter",
+      "analyzer"
+    ]
+  }
+}

@@ -113,39 +113,115 @@ class WebSocketTransport:
             print(f"WebSocket error proposing task: {e}")
             return False
     
-    async def send_accept(self, batch_id: str, step_name: str):
-        """Send task acceptance."""
-        # Implementation depends on specific requirements
-        pass
-    
-    async def send_reject(self, batch_id: str, step_name: str, reason: str):
-        """Send task rejection."""
-        # Implementation depends on specific requirements
-        pass
-    
+    async def send_accept(self, batch_id: str, step_name: str, conductor_uri: str = "ws://localhost:8766"):
+        """Send task acceptance to conductor via WebSocket."""
+        message = {
+            'type': 'Accept',
+            'batch_id': batch_id,
+            'step_name': step_name,
+            'sender_id': self.worker.worker_id if self.worker else "unknown",
+            'timestamp': int(time.time())
+        }
+        try:
+            async with websockets.connect(conductor_uri) as websocket:
+                await websocket.send(json.dumps(message))
+                response = await websocket.recv()
+                response_data = json.loads(response)
+                return response_data.get('success', False)
+        except Exception as e:
+            print(f"WebSocket error sending accept: {e}")
+            return False
+
+    async def send_reject(self, batch_id: str, step_name: str, reason: str, conductor_uri: str = "ws://localhost:8766"):
+        """Send task rejection to conductor via WebSocket."""
+        message = {
+            'type': 'Reject',
+            'batch_id': batch_id,
+            'step_name': step_name,
+            'reason': reason,
+            'sender_id': self.worker.worker_id if self.worker else "unknown",
+            'timestamp': int(time.time())
+        }
+        try:
+            async with websockets.connect(conductor_uri) as websocket:
+                await websocket.send(json.dumps(message))
+                response = await websocket.recv()
+                response_data = json.loads(response)
+                return response_data.get('success', False)
+        except Exception as e:
+            print(f"WebSocket error sending reject: {e}")
+            return False
+
     async def send_completed(
         self, 
         batch_id: str, 
         step_name: str, 
         success: bool, 
-        result: Dict[str, Any]
+        result: Dict[str, Any],
+        conductor_uri: str = "ws://localhost:8766"
     ):
-        """Send task completion."""
-        # Implementation depends on specific requirements
-        pass
-    
+        """Send task completion to conductor via WebSocket."""
+        message = {
+            'type': 'Completed',
+            'batch_id': batch_id,
+            'step_name': step_name,
+            'success': success,
+            'result': result,
+            'sender_id': self.worker.worker_id if self.worker else "unknown",
+            'timestamp': int(time.time())
+        }
+        try:
+            async with websockets.connect(conductor_uri) as websocket:
+                await websocket.send(json.dumps(message))
+                response = await websocket.recv()
+                response_data = json.loads(response)
+                return response_data.get('success', False)
+        except Exception as e:
+            print(f"WebSocket error sending completed: {e}")
+            return False
+
     async def send_failed(
         self, 
         batch_id: str, 
         step_name: str, 
         error_code: str, 
-        error_msg: str
+        error_msg: str,
+        conductor_uri: str = "ws://localhost:8766"
     ):
-        """Send task failure."""
-        # Implementation depends on specific requirements
-        pass
-    
-    async def announce_availability(self, worker_id: str, roles: List[str]):
-        """Announce worker availability."""
-        # Implementation depends on specific requirements
-        pass
+        """Send task failure to conductor via WebSocket."""
+        message = {
+            'type': 'Failed',
+            'batch_id': batch_id,
+            'step_name': step_name,
+            'error_code': error_code,
+            'error_msg': error_msg,
+            'sender_id': self.worker.worker_id if self.worker else "unknown",
+            'timestamp': int(time.time())
+        }
+        try:
+            async with websockets.connect(conductor_uri) as websocket:
+                await websocket.send(json.dumps(message))
+                response = await websocket.recv()
+                response_data = json.loads(response)
+                return response_data.get('success', False)
+        except Exception as e:
+            print(f"WebSocket error sending failed: {e}")
+            return False
+
+    async def announce_availability(self, worker_id: str, roles: List[str], conductor_uri: str = "ws://localhost:8766"):
+        """Announce worker availability to conductor via WebSocket."""
+        message = {
+            'type': 'AnnounceAvailability',
+            'worker_id': worker_id,
+            'roles': roles,
+            'timestamp': int(time.time())
+        }
+        try:
+            async with websockets.connect(conductor_uri) as websocket:
+                await websocket.send(json.dumps(message))
+                response = await websocket.recv()
+                response_data = json.loads(response)
+                return response_data.get('success', False)
+        except Exception as e:
+            print(f"WebSocket error announcing availability: {e}")
+            return False

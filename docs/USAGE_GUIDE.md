@@ -187,55 +187,20 @@ await ml_agent.setup()
 
 ### 4. LLM Integration Example
 
+> **Note:** LLM integration is now fully modular, streaming, and .env-driven. See the main documentation (`docs/documentation.md`) for advanced LLM usage, streaming output, and adding new providers.
+
 ```python
-"""
-Integrate with Large Language Models
-"""
-import openai  # or your preferred LLM client
+from apc.helpers.llms import AzureOpenAIStreamingClient
 
-class LLMAgent:
-    def __init__(self, api_key):
-        self.worker = Worker("llm-agent", roles=["text-generator", "qa-assistant"])
-        self.client = openai.OpenAI(api_key=api_key)
-        
-    async def setup(self):
-        @self.worker.register_handler("generate_text")
-        async def generate_text(params):
-            prompt = params.get("prompt")
-            response = await self.client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": prompt}]
-            )
-            return {"generated_text": response.choices[0].message.content}
-        
-        @self.worker.register_handler("analyze_sentiment")  
-        async def analyze_sentiment(params):
-            text = params.get("text")
-            # Your sentiment analysis logic
-            return {"sentiment": "positive", "confidence": 0.89}
-        
-        await self.worker.start_server(port=50055)
+# Instantiates and auto-loads config from .env
+llm_client = AzureOpenAIStreamingClient()
 
-# Usage with conductor
-async def run_content_pipeline():
-    conductor = Conductor("content-conductor")
-    
-    workflow = [
-        {
-            "step": "generate_text",
-            "params": {"prompt": "Write a product description for a smart watch"},
-            "required_role": "text-generator"
-        },
-        {
-            "step": "analyze_sentiment",
-            "params": {"text": "{{previous_result.generated_text}}"},
-            "required_role": "qa-assistant",
-            "depends_on": ["generate_text"]
-        }
-    ]
-    
-    result = await conductor.execute_workflow("content-001", workflow)
-    return result
+# Streaming chat completion with colored output
+response = llm_client.chat_completion_streaming(
+    agent_name="My Agent",
+    messages=[{"role": "user", "content": "Hello!"}],
+    max_tokens=500
+)
 ```
 
 ### 5. Checkpoint and Recovery

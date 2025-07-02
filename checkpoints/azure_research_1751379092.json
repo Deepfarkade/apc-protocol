@@ -1,0 +1,25 @@
+{
+  "checkpoint_time": 1751381217.6874259,
+  "batch_id": "azure_research_1751379092",
+  "apc_version": "1.0.0",
+  "state": {
+    "task_id": "azure_research_1751379092-report-1751381217",
+    "batch_id": "azure_research_1751379092",
+    "step_name": "report",
+    "params": {},
+    "state": "COMPLETED",
+    "started_at": 1751381217.6494248,
+    "completed_at": 1751381217.6634264,
+    "result": {
+      "status": "failed",
+      "error": "Missing research or analysis data"
+    },
+    "error": null,
+    "worker_id": "research_agent_ws",
+    "roles": [
+      "researcher",
+      "reporter",
+      "analyzer"
+    ]
+  }
+}

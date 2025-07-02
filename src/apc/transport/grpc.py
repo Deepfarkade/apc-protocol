@@ -126,39 +126,113 @@ class GRPCTransport:
                 print(f"gRPC error proposing task: {e}")
                 return False
     
-    async def send_accept(self, batch_id: str, step_name: str):
+    async def send_accept(self, batch_id: str, step_name: str, conductor_address: str = "localhost:50051"):
         """Send task acceptance (called by worker)."""
-        # In a real implementation, this would notify the conductor
-        pass
-    
-    async def send_reject(self, batch_id: str, step_name: str, reason: str):
+        async with grpc.aio.insecure_channel(conductor_address) as channel:
+            stub = apc_pb2_grpc.APCServiceStub(channel)
+            base = apc_pb2.BaseMessage(
+                batch_id=batch_id,
+                sender_id=self.worker.worker_id if self.worker else "unknown",
+                timestamp=int(time.time())
+            )
+            request = apc_pb2.AcceptResponse(
+                base=base,
+                step_name=step_name
+            )
+            try:
+                response = await stub.SendAccept(request)
+                return response.success
+            except grpc.RpcError as e:
+                print(f"gRPC error sending accept: {e}")
+                return False
+
+    async def send_reject(self, batch_id: str, step_name: str, reason: str, conductor_address: str = "localhost:50051"):
         """Send task rejection (called by worker)."""
-        # In a real implementation, this would notify the conductor
-        pass
-    
+        async with grpc.aio.insecure_channel(conductor_address) as channel:
+            stub = apc_pb2_grpc.APCServiceStub(channel)
+            base = apc_pb2.BaseMessage(
+                batch_id=batch_id,
+                sender_id=self.worker.worker_id if self.worker else "unknown",
+                timestamp=int(time.time())
+            )
+            request = apc_pb2.RejectResponse(
+                base=base,
+                step_name=step_name,
+                reason=reason
+            )
+            try:
+                response = await stub.SendReject(request)
+                return response.success
+            except grpc.RpcError as e:
+                print(f"gRPC error sending reject: {e}")
+                return False
+
     async def send_completed(
         self, 
         batch_id: str, 
         step_name: str, 
         success: bool, 
-        result: Dict[str, Any]
+        result: Dict[str, Any],
+        conductor_address: str = "localhost:50051"
     ):
         """Send task completion (called by worker)."""
-        # In a real implementation, this would notify the conductor
-        pass
-    
+        async with grpc.aio.insecure_channel(conductor_address) as channel:
+            stub = apc_pb2_grpc.APCServiceStub(channel)
+            base = apc_pb2.BaseMessage(
+                batch_id=batch_id,
+                sender_id=self.worker.worker_id if self.worker else "unknown",
+                timestamp=int(time.time())
+            )
+            request = apc_pb2.CompletedNotification(
+                base=base,
+                step_name=step_name,
+                success=success
+            )
+            for key, value in result.items():
+                request.result[key] = str(value)
+            try:
+                response = await stub.SendCompleted(request)
+                return response.success
+            except grpc.RpcError as e:
+                print(f"gRPC error sending completed: {e}")
+                return False
+
     async def send_failed(
         self, 
         batch_id: str, 
         step_name: str, 
         error_code: str, 
-        error_msg: str
+        error_msg: str,
+        conductor_address: str = "localhost:50051"
     ):
         """Send task failure (called by worker)."""
-        # In a real implementation, this would notify the conductor
-        pass
-    
-    async def announce_availability(self, worker_id: str, roles: List[str]):
+        async with grpc.aio.insecure_channel(conductor_address) as channel:
+            stub = apc_pb2_grpc.APCServiceStub(channel)
+            base = apc_pb2.BaseMessage(
+                batch_id=batch_id,
+                sender_id=self.worker.worker_id if self.worker else "unknown",
+                timestamp=int(time.time())
+            )
+            request = apc_pb2.FailedNotification(
+                base=base,
+                step_name=step_name,
+                error_code=error_code,
+                error_msg=error_msg
+            )
+            try:
+                response = await stub.SendFailed(request)
+                return response.success
+            except grpc.RpcError as e:
+                print(f"gRPC error sending failed: {e}")
+                return False
+
+    async def announce_availability(self, worker_id: str, roles: List[str], conductor_address: str = "localhost:50051"):
         """Announce worker availability."""
-        # In a real implementation, this would register with service discovery
-        pass
+        # This method should notify the conductor of worker availability.
+        # For now, we call a method on the conductor directly if available, otherwise this should be a gRPC call.
+        if self.conductor:
+            self.conductor.on_worker_available(worker_id, roles)
+        else:
+            # If conductor is remote, implement a gRPC call for worker registration (not defined in proto yet)
+            print(f"Announce availability: worker {worker_id} with roles {roles}")
+        return True
