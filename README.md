@@ -10,27 +10,6 @@
 A protocol for decentralized, resilient, and auditable orchestration 
 of heterogeneous AI agent ecosystems.
 
-Key Features:
-- Distributed, production-grade agent orchestration using gRPC or WebSocket
-- Real Azure OpenAI agent integration (see examples/real_world)
-- Persistent checkpointing for workflow recovery and auditability
-- Structured, colorized logging for clear terminal output
-- Example output and reports are saved to disk for review
-
-Logging:
-- INFO: Green
-- WARNING: Bold Yellow
-- ERROR: Bold Red
-- DEBUG: Cyan (dim)
-- CRITICAL: Magenta
-- Workflow summary: Bold Yellow in terminal
-
-Output:
-- All workflow results and reports are logged and saved to files in `./reports/` folder
-- Checkpoints are saved in ./checkpoints for automatic recovery
-
-See the example scripts in examples/real_world for real, end-to-end usage.
-
 ---
 
 APC (Agent Protocol Conductor) is an **open protocol and SDK** designed to orchestrate distributed AI agents in a truly decentralized, resilient, and auditable way. With APC, you can build intelligent systems where multiple agents—each with their own roles and capabilities—work together to accomplish complex tasks, adapt to failures, and recover automatically, all without relying on a central controller.
@@ -253,13 +232,6 @@ response = client.chat_completion_streaming(
 )
 ```
 
-#### **Key Features:**
-- 🎨 **Real-time colored streaming**: Purple/violet terminal output during LLM generation
-- 🔧 **Automatic .env detection**: All configuration loaded from environment variables
-- 📊 **Performance tracking**: Token count, timing, and model identification
-- 🎯 **Agent identification**: Clear labeling of which agent is making LLM calls
-- 🛡️ **Error handling**: Graceful fallbacks and clear error messages
-
 ### 📁 **Modular LLM Architecture**
 
 All LLM providers are organized in a clean, extensible structure:
@@ -373,19 +345,6 @@ python examples/basic/simple_grpc.py
 
 ---
 
-## 📦 Release Information
-
-- **Current Release:** v0.1.x (Alpha)
-- See [Releases](https://github.com/deepfarkade/apc-protocol/releases) for changelogs and version history.
-- This is the first public alpha release of the APC protocol and SDK.
-
----
-
-## 🛡️ License
-MIT
-
----
-
 ## 📚 **Advanced Topics & Detailed Comparisons**
 
 For comprehensive technical documentation including:
@@ -400,3 +359,18 @@ See our complete documentation:
 - **[Usage Guide](docs/USAGE_GUIDE.md)** - Comprehensive tutorials and production patterns
 
 ---
+
+---
+
+## 📦 Release Information
+
+- **Current Release:** v0.1.x (Alpha)
+- See [Releases](https://github.com/deepfarkade/apc-protocol/releases) for changelogs and version history.
+- This is the first public alpha release of the APC protocol and SDK.
+
+---
+
+## 🛡️ License
+MIT
+
+
